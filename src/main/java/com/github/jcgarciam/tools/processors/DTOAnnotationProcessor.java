@@ -42,7 +42,7 @@ public class DTOAnnotationProcessor extends AbstractProcessor {
 
         for (Element element : roundEnv.getElementsAnnotatedWith(annotations.iterator().next())) {
             if (element.getKind() == ElementKind.CLASS) {
-                debug("DTOGenerator for class " + element.getSimpleName());
+                //debug("DTOGenerator for class " + element.getSimpleName());
 
                 DTOGenerator annot = element.getAnnotation(DTOGenerator.class);
                 if(annot.describe() == null || annot.describe().length == 0) {
