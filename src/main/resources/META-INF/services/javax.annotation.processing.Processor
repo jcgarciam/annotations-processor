@@ -1,1 +1,2 @@
 com.github.jcgarciam.tools.processors.DTOAnnotationProcessor
+com.github.jcgarciam.tools.processors.JaxRsEndpointGeneratorProcessor
