@@ -2,8 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="ea5bb336-54c0-4910-b239-d7f8a8602585" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/com/github/jcgarciam/tools/processors/JaxRsEndpointGeneratorProcessor.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/resources/META-INF/services/javax.annotation.processing.Processor" afterPath="$PROJECT_DIR$/src/main/resources/META-INF/services/javax.annotation.processing.Processor" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="annotations-processor.iws" />
@@ -529,12 +527,17 @@
       <updated>1401910934599</updated>
       <workItem from="1401910937473" duration="5137000" />
       <workItem from="1402711596059" duration="1584000" />
-      <workItem from="1402806911313" duration="8940000" />
+      <workItem from="1402806911313" duration="8950000" />
     </task>
+    <task id="LOCAL-00001" summary="Adding support for JAX-RS generator">
+      <created>1402884090118</created>
+      <updated>1402884090118</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="15661000" />
+    <option name="totallyTimeSpent" value="15671000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1382" height="754" extended-state="6" />
