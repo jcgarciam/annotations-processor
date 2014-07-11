@@ -1,5 +1,6 @@
 package com.github.jcgarciam.tools.processors;
 
+import com.github.jcgarciam.tools.annotations.DTOGenerator;
 import com.github.jcgarciam.tools.annotations.JaxRsEndpointExporter;
 import com.github.jcgarciam.tools.metadata.ClassField;
 import com.github.jcgarciam.tools.metadata.ClassMetadataCollector;
@@ -37,28 +38,30 @@ public class JaxRsEndpointGeneratorProcessor extends AbstractProcessor {
 
         for (Element element : roundEnv.getElementsAnnotatedWith(annotations.iterator().next())) {
             if (element.getKind() == ElementKind.CLASS) {
-                //debug("DTOGenerator for class " + element.getSimpleName());
-
                 JaxRsEndpointExporter annot = element.getAnnotation(JaxRsEndpointExporter.class);
-                generateUsinClassMetadataCollector(filer, newLine, element, annot);
+                DTOGenerator annotDTO        = element.getAnnotation(DTOGenerator.class);
+                generateUsinClassMetadataCollector(filer, newLine, element, annot, annotDTO);
 
             }
         }
         return true;
     }
 
-    private void generateUsinClassMetadataCollector(final Filer theFiler, final String theNewLine, final Element theElement, final JaxRsEndpointExporter theAnnot) {
+    private void generateUsinClassMetadataCollector(final Filer theFiler, final String theNewLine,
+                                                    final Element theElement, final JaxRsEndpointExporter theAnnot,
+                                                    final DTOGenerator theDTOGeneratorAnnot) {
         String nameSuffix = theAnnot.suffix();
         ClassMetadataCollector metadataCollector = new ClassMetadataCollector(theElement,
                                                                               processingEnv,
                                                                               new HashSet<String>());
 
-        String targetPackageName = theAnnot.packageName();
+        String targetPackageName = theAnnot.packageNameEndpoint();
         if("".equals(targetPackageName) || targetPackageName == null){
             targetPackageName = metadataCollector.getPackageClassName();
         }
         String sourceClassName = metadataCollector.getClassName();
         String targetClassName = sourceClassName+nameSuffix;
+        String dtoClassName    = metadataCollector.getClassName()+ theDTOGeneratorAnnot.suffix();
         //TODO:Utilizar template FreeMarker
         try {
 
@@ -66,19 +69,16 @@ public class JaxRsEndpointGeneratorProcessor extends AbstractProcessor {
             Writer w = jfo.openWriter();
             w.write("package "+targetPackageName+ ";"+theNewLine);
             w.write(theNewLine);
-            w.write("import java.io.Serializable;");
-            w.write(theNewLine);
             w.write("import "+metadataCollector.getPackageClassName()+"."+sourceClassName+";"+theNewLine);
-            w.write("import com.wasab.web.dto."+metadataCollector.getClassName()+"DTO;"+theNewLine);
-            w.write("import com.wasab.web.dto.builder.ListObjectBuilder;"+theNewLine);
+            w.write("import "+theDTOGeneratorAnnot.packageName()+"."+ dtoClassName +";"+theNewLine);
 
             w.write(theNewLine);
 
-            w.write("import javax.inject.Inject;"+theNewLine);
             w.write("import javax.persistence.EntityManager;"+theNewLine);
             w.write("import javax.persistence.PersistenceContext;"+theNewLine);
             w.write("import javax.ws.rs.*;"+theNewLine);
             w.write("import javax.ws.rs.core.Response;"+theNewLine);
+            w.write("import java.util.ArrayList;"+theNewLine);
             w.write("import java.util.List;"+theNewLine);
 
             w.write(theNewLine);
@@ -94,19 +94,18 @@ public class JaxRsEndpointGeneratorProcessor extends AbstractProcessor {
             w.write("\tprotected EntityManager entityManager;"+theNewLine);
 
             w.write(theNewLine);
-            w.write("\t@Inject" +theNewLine+
-                    "\tprotected ListObjectBuilder listObjectBuilder;");
-
-            w.write(theNewLine);
-            w.write(theNewLine);
 
             w.write("    protected Object fromJPAToDTO("+sourceClassName+" obj){\n" +
-                    "        return new "+sourceClassName+"DTO(obj);\n" +
+                    "        return new "+dtoClassName+"(obj);\n" +
                     "    }\n");
             w.write(theNewLine);
             w.write("    @SuppressWarnings(\"unchecked\")\n" +
-                    "    protected List fromJPAListToDTOList(List objList){\n" +
-                    "        return listObjectBuilder.build("+sourceClassName+"DTO.class, "+sourceClassName+".class, objList);\n" +
+                    "    protected List fromJPAListToDTOList(List<"+sourceClassName+"> objList){\n" +
+                    "        List<"+dtoClassName+"> dtoList = new ArrayList<>();\n" +
+                    "        for("+sourceClassName+" obj : objList){\n" +
+                    "            dtoList.add(new "+dtoClassName+"(obj));\n" +
+                    "        }\n" +
+                    "        return dtoList; \n"+
                     "    }\n");
             w.write(theNewLine);
             w.write("    @GET\n" +

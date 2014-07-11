@@ -11,6 +11,6 @@ import java.lang.annotation.Target;
 @Target(ElementType.TYPE)
 @Retention(value = RetentionPolicy.RUNTIME)
 public @interface JaxRsEndpointExporter {
-    public String packageName();
+    public String packageNameEndpoint();
     public String suffix() default "Endpoint";
 }
